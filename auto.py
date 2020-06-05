@@ -12,6 +12,7 @@ import logging.config
 from logging.handlers import RotatingFileHandler
 import traceback
 import pymysql
+import requests
 
 cors = None
 
@@ -81,6 +82,17 @@ class DbClient():
 
 
 
+
+class handler(Resource):
+    def get(self, num):
+        response1 = requests.get('http://192.168.10.125:9000/square/{}'.format(num)).content
+        response2 = requests.get('http://192.168.10.125:9001/double/{}'.format(num)).content
+        response3 = requests.get('http://192.168.10.125:9002/fruit/{}'.format(num)).content
+        #print("responses {} {} {}".format(response1,response2,response3))
+        return {'response1':response1, 'response2' : response2, 'response3' : response3}
+        #return response1, response2, response3
+
+
 class square(Resource):
     def get(self, num):
         print type(num)
@@ -112,6 +124,7 @@ def start_webserver(port):
     api.add_resource(square, '/square/<num>')       # Route_1   square
     api.add_resource(double, '/double/<num>')       # Route_2   double
     api.add_resource(fruit, '/fruit/<num>')         # Route_3   fruit
+    api.add_resource(handler, '/handler/<num>')     # Route_4   handler
     
     wk_log = logging.getLogger('werkzeug')
     wk_log.disabled = True
@@ -121,4 +134,6 @@ def start_webserver(port):
 
 
 if __name__ == "__main__":
-    start_webserver(5001)
+    port = sys.argv[1]
+    print(port)
+    start_webserver(port)
