@@ -13,10 +13,13 @@ from logging.handlers import RotatingFileHandler
 import traceback
 import pymysql
 import requests
+#from ConfigParser import SafeConfigParser
+from configobj import ConfigObj 
 
 cors = None
 
 hook = None
+configFile = "./config.ini"
 
 
 class DbClient():
@@ -84,10 +87,26 @@ class DbClient():
 
 
 class handler(Resource):
+    def __init__(self):
+        # read from config file
+        conf = ConfigObj('config.ini')
+        app_ip = conf[app_name]['IP']
+        app_port = conf[app_name]['Port']
+
+
+        self.square_service_ip   =  conf['square']['IP']
+        self.square_service_port =  conf['square']['Port']
+
+        self.fruit_service_ip   = conf['fruit']['IP']
+        self.fruit_service_port = conf['fruit']['Port']
+
+        self.double_service_ip   = conf['double']['IP']
+        self.double_service_port = conf['double']['Port']
+
     def get(self, num):
-        response1 = requests.get('http://192.168.10.125:9000/square/{}'.format(num)).content
-        response2 = requests.get('http://192.168.10.125:9001/double/{}'.format(num)).content
-        response3 = requests.get('http://192.168.10.125:9002/fruit/{}'.format(num)).content
+        response1 = requests.get('http://{}:{}/square/{}'.format(self.square_service_ip,self.square_service_port,num)).content
+        response2 = requests.get('http://{}:{}/double/{}'.format(self.double_service_ip,self.double_service_port,num)).content
+        response3 = requests.get('http://{}:{}/fruit/{}'.format(self.fruit_service_ip,self.fruit_service_port,num)).content
         #print("responses {} {} {}".format(response1,response2,response3))
         return {'response1':response1, 'response2' : response2, 'response3' : response3}
         #return response1, response2, response3
@@ -105,6 +124,7 @@ class double(Resource):
 
 
 class fruit(Resource):
+
     def get(self, num):
         """ Picks fruit from db """
         if int(num)<1 or int(num)>9:
@@ -115,7 +135,7 @@ class fruit(Resource):
         return {'fruit': fruit[0][1]}
 
 
-def start_webserver(port):
+def start_webserver(ip,port):
     global hook
     app = Flask(__name__)
     cors = CORS(app)
@@ -129,11 +149,13 @@ def start_webserver(port):
     wk_log = logging.getLogger('werkzeug')
     wk_log.disabled = True
     wk_log.info("....Starting API Server at port %s...."%(port))
-    app.run(host='0.0.0.0', port=port, debug = False)
+    app.run(host=ip, port=port, debug = False)
     # app.run(host='192.168.10.125', port=port, debug = False)
 
 
 if __name__ == "__main__":
-    port = sys.argv[1]
-    print(port)
-    start_webserver(port)
+    app_name = sys.argv[1]
+    conf = ConfigObj('config.ini')
+    app_ip = conf[app_name]['IP']
+    app_port = conf[app_name]['Port']
+    start_webserver(app_ip,app_port)
