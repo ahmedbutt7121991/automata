@@ -1,13 +1,19 @@
 # automata
 This repository contains learning materials for automation project.
+
 ## How to run?
-You need to run auto.py 4 times as follows:
+
+- update `IP` and `Port` in `config.ini` file
+
+- You need to run auto.py 4 times as follows:
+
 ```bash
-python auto.py 9000 & #sqaure service
-python auto.py 9001 & #double service
-python auto.py 9002 & #fruit service
-python auto.py 5001 & #handler
+python auto.py square & #sqaure service
+python auto.py double & #double service
+python auto.py fruit & #fruit service
+python auto.py handler & #handler
 ```
+
 ## How to check?
 Open a new tab in your browser, and enter the following link:
 
