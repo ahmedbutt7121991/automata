@@ -30,6 +30,7 @@ def getColor():
 @app.route("/")
 def home():
     color = getColor()
+    print("color {}".format(color))
     context = { 'square' : 0, 'double' : 0, 'color' : color, 'key': 0}
     return render_template("index.html",value=context)
 

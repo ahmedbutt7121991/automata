@@ -1,0 +1,8 @@
+configobj==4.7.2
+configparser==4.0.2
+cryptography==3.0
+Flask==1.1.2
+Flask-Cors==3.0.8
+Flask-RESTful==0.3.8
+PyMySQL==0.10.0
+requests==2.24.0
