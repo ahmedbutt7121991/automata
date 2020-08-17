@@ -2,7 +2,7 @@ from flask_restful import Resource, Api
 from flask import send_file
 from json import dumps
 from flask import jsonify
-from flask import Flask, request
+from flask import Flask, request, render_template, redirect
 import os
 import sys
 from flask_cors import CORS, cross_origin
@@ -15,28 +15,53 @@ import pymysql
 import requests
 #from ConfigParser import SafeConfigParser
 from configobj import ConfigObj 
+import json
 
 cors = None
-
+app = Flask(__name__)
 hook = None
 configFile = "./config.ini"
 
+def getColor():
+    if os.environ.get('PG_COLOR') is not None: # None
+        return os.environ.get('PG_COLOR')
+    return 'black'
+
+@app.route("/")
+def home():
+    color = getColor()
+    context = { 'square' : 0, 'double' : 0, 'color' : color, 'key': 0}
+    return render_template("index.html",value=context)
+
+@app.route('/getData', methods = ['POST'])
+def getData():
+    key = request.form['key']
+    print("the key is " + key)
+    square_service_ip   =  conf['square']['IP']
+    square_service_port =  conf['square']['Port']
+    double_service_ip   = conf['double']['IP']
+    double_service_port = conf['double']['Port']
+    response1 = requests.get('http://{}:{}/square/{}'.format(square_service_ip,square_service_port,key)).content
+    response2 = requests.get('http://{}:{}/double/{}'.format(double_service_ip,double_service_port,key)).content
+    color = getColor()
+    context = { 'square' : json.loads(response1)["square"], 'double' : json.loads(response2)["double"], 'color' : color, 'key': key }
+    return render_template("index.html",value=context)
 
 class DbClient():
     """class for communicating with DB"""
     def __init__(self):
         self.db = None
         self.db_name = 'example'
-        self.table_name = 'auto_table'
+        #self.table_name = 'auto_table'
         self.create_connection()
 
     def create_connection(self):
         try:
             self.db = pymysql.connect(
-                    host = 'localhost', #self.conf_parser ['DB-Client']['Host'],  #'localhost',
-                    user = 'root',  #self.conf_parser ['DB-Client']['User'],  #'root'
-                    password = 'Xflow@123', #self.conf_parser ['DB-Client']['Password'],  #'Xflow@123',
-                    db = self.db_name
+                    host = conf['credentials']['host'],
+                    user = conf['credentials']['username'],
+                    password = conf['credentials']['password'],
+                    db = conf['credentials']['dbname']
                     )
             self.db.autocommit(True)
         except pymysql.Error as e:
@@ -45,6 +70,13 @@ class DbClient():
 
     def close_connection(self):
         self.db.close()
+
+    def get_value(self,table_name,key):
+        query = "SELECT val FROM {} WHERE num={} ".format(table_name,key)
+        result = self.query_execute(query)
+        if result == ():
+            return 0
+        return result[0][0]
 
     ## Executes query
     # @params query
@@ -84,8 +116,6 @@ class DbClient():
         return result
 
 
-
-
 class handler(Resource):
     def __init__(self):
         # read from config file
@@ -115,12 +145,15 @@ class handler(Resource):
 class square(Resource):
     def get(self, num):
         print type(num)
-        return {'square': int(num)*int(num)}
+        #return {'square': int(num)*int(num)}
+        client = DbClient()
+        return {'square' : int(client.get_value('square',num)) }
 
 class double(Resource):
     def get(self, num):
-        
-        return {'double':int(num)*2}
+        client = DbClient()
+        return {'double' : int(client.get_value('dbl',num)) }
+        #return {'double':int(num)*2}
 
 
 class fruit(Resource):
@@ -137,7 +170,6 @@ class fruit(Resource):
 
 def start_webserver(ip,port):
     global hook
-    app = Flask(__name__)
     cors = CORS(app)
 
     api = Api(app)

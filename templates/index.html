@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>Simple Flask Website</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/template.css') }}">
+        <script src="jquery-3.5.1.min.js"></script>
+    </head>
+    <body style="background-color:{{ value }}">
+        </table> 
+        <header>
+            <div class="container">
+                <h1 class="logo">Demo Site</h1>
+            </div>
+        </header>
+        <div class="container">
+            <h1> A Simple Flask APP </h1>
+            <p> There are two servers running as an example</p>
+            <p> One of them returns the square of the given number </p>
+            <p> The other returns the double of the given number </p>
+            <p> Both of these values are searched in MYSQL table</p>
+            <form action="/getData" method="post">
+                <label for="key">Quantity (between 1 and 9):</label>
+                <input type="number" id="key" name="key" min="1" max="9">
+                <input type="submit" class="button">
+            </form> 
+            <script>
+                function getInputValue(){
+                    var inputVal = document.getElementById("key").value;
+                    alert(inputVal);
+
+                }
+            </script>
+            <div class="container">
+                <table style="width:100%">
+                    <tr>
+                        <th>Key</th>
+                        <th>Value</th>
+                        <th>Action</th>
+                    </tr>
+                    <tr>
+                        <td id="square-key">{{ value.key }}</td>
+                        <td id="square-value">{{ value.square }}</td>
+                        <td>square</td>
+                    </tr>
+                    <tr>
+                        <td id="double-value">{{ value.key }}</td>
+                        <td id="double-value">{{ value.double }}</td>
+                        <td>double</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </body>
+    {}
+</html>
