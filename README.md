@@ -19,7 +19,7 @@ A basic flask app that takes `key` (number from 1-9) from user and returns `squa
 - Make sure the credentials are set for MySQL in `config.ini` file. `db_dump.sql` contains the dump of required database. update as follows:
 
 ```bash
-mysql db_name < backup-file.sql
+mysql example < backup-file.sql
 ```
 
 - You need to run auto.py times as follows:
