@@ -25,7 +25,7 @@ configFile = "./config.ini"
 def getColor():
     if os.environ.get('PG_COLOR') is not None: # None
         return os.environ.get('PG_COLOR')
-    return 'black'
+    return 'white'
 
 @app.route("/")
 def home():
@@ -182,7 +182,7 @@ def start_webserver(ip,port):
     api.add_resource(handler, '/handler/<num>')     # Route_4   handler
     
     wk_log = logging.getLogger('werkzeug')
-    wk_log.disabled = True
+    wk_log.disabled = False
     wk_log.info("....Starting API Server at port %s...."%(port))
     app.run(host=ip, port=port, debug = False)
     # app.run(host='192.168.10.125', port=port, debug = False)
