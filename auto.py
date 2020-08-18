@@ -39,11 +39,13 @@ def getData():
     key = request.form['key']
     print("the key is " + key)
     square_service_ip   =  conf['square']['IP']
+    square_service_name   =  conf['square']['ClientName']
     square_service_port =  conf['square']['Port']
     double_service_ip   = conf['double']['IP']
+    double_service_name   = conf['double']['ClientName']
     double_service_port = conf['double']['Port']
-    response1 = requests.get('http://{}:{}/square/{}'.format(square_service_ip,square_service_port,key)).content
-    response2 = requests.get('http://{}:{}/double/{}'.format(double_service_ip,double_service_port,key)).content
+    response1 = requests.get('http://{}:{}/square/{}'.format(square_service_name,square_service_port,key)).content
+    response2 = requests.get('http://{}:{}/double/{}'.format(double_service_name,double_service_port,key)).content
     color = getColor()
     context = { 'square' : json.loads(response1)["square"], 'double' : json.loads(response2)["double"], 'color' : color, 'key': key }
     return render_template("index.html",value=context)
