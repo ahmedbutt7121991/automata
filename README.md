@@ -58,5 +58,31 @@ if the environment variable is not set, the background color of the page default
 
 ![](https://i.imgur.com/dyD5ANX.png)
 
+---------------------------------------
+# Running Automata in Containers
+
+## Pre-requisites:
+- Docker CE
+- Docker Compose v3
+
+## Steps:
+- Clone the automata repo and checkout to the required branch:
+```sh
+  git clone https://github.com/ihsaanulhaq/automata.git
+  cd automata
+  git checkout temp_dev
+```
+- Create the required external network with `docker network create automata`
+- Create MySQL container as follows:
+```sh
+cd mysql/
+docker-compose up -d
+```
+- Create Automata Containers from automata directory as follows:
+```sh
+cd ../
+docker-compose up
+```
+- The handler will be serving webpag at **<HOST_IP:8081>**
 
 
