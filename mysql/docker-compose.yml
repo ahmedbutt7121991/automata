@@ -1,0 +1,16 @@
+version: '3.3'
+services:
+# Handler DB
+  automata_db:
+    container_name: db
+    build: .
+    image: automata_db:latest
+    restart: always
+    environment:
+      - "MYSQL_ROOT_PASSWORD=xflow"
+    networks:
+      - automata
+
+networks:
+    automata:
+      external: true
