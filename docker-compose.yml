@@ -1,0 +1,45 @@
+version: '3.3'
+services:
+# Handler Container
+  automata_handler:
+    container_name: handler
+    build: .
+    image: automata:latest
+    restart: always
+    volumes:
+    - ./config.ini:/config/config.ini
+    #environment:
+    #  - "PG_COLOR=#E0FFFF"
+    networks:
+      - automata
+    ports:
+      - "8081:8080"
+    command: "handler"
+
+# Double Container
+  automata_double:
+    container_name: double
+    build: .
+    image: automata:latest
+    restart: always
+    volumes:
+    - ./config.ini:/config/config.ini
+    networks:
+      - automata
+    command: "double"
+
+# Square Container
+  automata_square:
+    container_name: square
+    build: .
+    image: automata:latest
+    restart: always
+    volumes:
+    - ./config.ini:/config/config.ini
+    networks:
+      - automata
+    command: "square"
+
+networks:
+    automata:
+      external: true
