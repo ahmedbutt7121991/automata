@@ -8,8 +8,9 @@ services:
     restart: always
     volumes:
     - ./config.ini:/config/config.ini
-    #environment:
-    #  - "PG_COLOR=#E0FFFF"
+      #environment:
+        #- "F_COLOR=red"
+        #- "PG_COLOR=lightblue"
     networks:
       - automata
     ports:

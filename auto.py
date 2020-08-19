@@ -27,11 +27,17 @@ def getColor():
         return os.environ.get('PG_COLOR')
     return 'white'
 
+def getFontColor():
+    if os.environ.get('F_COLOR') is not None: # None
+        return os.environ.get('F_COLOR')
+    return 'black'
+
 @app.route("/")
 def home():
     color = getColor()
+    fColor = getFontColor()
     print("color {}".format(color))
-    context = { 'square' : 0, 'double' : 0, 'color' : color, 'key': 0}
+    context = { 'square' : 0, 'double' : 0, 'color' : color, 'key': 0, 'fcolor' : fColor}
     return render_template("index.html",value=context)
 
 @app.route('/getData', methods = ['POST'])
@@ -47,7 +53,8 @@ def getData():
     response1 = requests.get('http://{}:{}/square/{}'.format(square_service_name,square_service_port,key)).content
     response2 = requests.get('http://{}:{}/double/{}'.format(double_service_name,double_service_port,key)).content
     color = getColor()
-    context = { 'square' : json.loads(response1)["square"], 'double' : json.loads(response2)["double"], 'color' : color, 'key': key }
+    fColor = getFontColor()
+    context = { 'square' : json.loads(response1)["square"], 'double' : json.loads(response2)["double"], 'color' : color, 'key': key , 'fcolor' : fColor }
     return render_template("index.html",value=context)
 
 class DbClient():
